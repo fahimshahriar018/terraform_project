@@ -1,29 +1,30 @@
 
 resource "aws_vpc" "terraform-vpc" {
-	cidr_block = "10.0.0.0/16"
+	cidr_block = var.vpc_cidr
 	tags = {
-		name = "terraform-vpc"
-		createdBy = "terraform"
+		environment = var.tags["env"]
+		createdBy = var.tags["createdBy"]
 	}
 }
 
 resource "aws_subnet" "terraform-public-subnet" {
 	vpc_id = aws_vpc.terraform-vpc.id
-	cidr_block = "10.0.1.0/24"
-	availability_zone = "us-east-1a"
+	cidr_block = var.public_subnet_cidr_block
+	availability_zone = "${var.region}a"
 	tags = {
-		name = "terraform_public_subnet"
-		createdBy = "terraform"
+		
+		environment = var.tags["env"]
+		createdBy = var.tags["createdBy"]
 	}
 }
 
 resource "aws_subnet" "terraform-private-subnet" {
 	vpc_id = aws_vpc.terraform-vpc.id
-	cidr_block = "10.0.2.0/24"
-	availability_zone = "us-east-1b"
-	tags = {
-		name = "terraform_private_subnet"
-		createdBy = "terraform"
+	cidr_block = var.private_subnet_cidr_block
+	availability_zone = "${var.region}b"
+	tags = {	
+		environment = var.tags["env"]
+		createdBy = var.tags["createdBy"]
 	}
 }
 
@@ -32,9 +33,9 @@ resource "aws_internet_gateway" "terraform-igw" {
 	
 	vpc_id = aws_vpc.terraform-vpc.id
 	
-	tags = {
-		name = "terraform_internet_gateway"
-		createdBy = "terraform"
+	tags = {	
+		environment = var.tags["env"]
+		createdBy = var.tags["createdBy"]
 	}
 }
 
@@ -47,8 +48,9 @@ resource "aws_route_table" "terraform-public-rt" {
 	}
 	
 	tags = {
-		name = "terraform_public_routing_table"
-		createdBy = "terraform"
+
+		environment = var.tags["env"]
+		createdBy = var.tags["createdBy"]
 	}
 }
 
@@ -59,31 +61,3 @@ resource "aws_route_table_association" "terraform_rt_association" {
 }
 
 
-################### Output Block ##############################3
-output "vpc-id" {
-	value = aws_vpc.terraform-vpc.id
-	description = "VPC ID  "
-}
-
-
-output "public-subnet-id" {
-	value = aws_subnet.terraform-public-subnet.id
-	description = "Public Subnet ID  "
-}
-
-
-output "private-subnet-id" {
-	value = aws_subnet.terraform-private-subnet.id
-	description = "Private subnet "
-}
-
-output "vpc-igw-id" {
-	value = aws_internet_gateway.terraform-igw.id
-	description = "VPC Internet Gateway ID "
-}
-
-
-output "vpc-public-rt-id" {
-	value = aws_route_table.terraform-public-rt.id
-	description = "VPC Public Routing table ID "
-}
