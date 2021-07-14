@@ -1,4 +1,9 @@
 ###output Block ##############################3
+
+output "region" {
+	value = var.region
+}
+
 output "vpc-id" {
         value = aws_vpc.terraform-vpc.id
         description = "VPC ID  "
@@ -27,4 +32,6 @@ output "vpc-public-rt-id" {
         description = "VPC Public Routing table ID "
 }
              
-
+output "vpc-security-group-id" {
+	value = aws_security_group.terraform-vpc-sg.id
+}
