@@ -7,7 +7,7 @@ resource "aws_instance" "terraform_server" {
 		createdBy = var.tags["createdBy"]
 		description = "A nginx server created by Terraform"
 	}
-#	private_ip = var.private_ip[0]
+	private_ip = var.private_ip[0]
 	subnet_id = var.subnet_id
 	associate_public_ip_address = true
 	hibernation = true
@@ -39,6 +39,15 @@ resource "aws_instance" "terraform_server" {
 
 	key_name = aws_key_pair.terraform_key.id
 	vpc_security_group_ids = [var.security_group_id]
+	 connection {
+   		 type     = "ssh"
+   		 user     = "ubuntu"
+   		 private_key = file("~/.ssh/id_rsa")
+    		 host     = aws_instance.terraform_server.public_ip
+  }
+	#depends_on = [
+	#	aws_key_pair.terraform_key,		
+	#]
 } 
 #resource "aws_network_interface" "network_interface" {
 #	subnet_id = var.subnet_id
@@ -65,6 +74,5 @@ resource "aws_instance" "terraform_server" {
 #}
 
 resource "aws_key_pair" "terraform_key" {
-	key_name = "terraform-key"
 	public_key = file("/home/fahim/.ssh/id_rsa.pub")
 }
